@@ -1,28 +1,118 @@
+import { ServicioReserva } from "../services/ServicioReserva.js";
+
 export class ControladorReservas {
     constructor (){}
-    registrarReserva (peticion,respuesta){
+    async registrarReserva (peticion,respuesta){
         try {
+            let servicioReserva = new ServicioReserva ()
+            // checkear los datos que quieren usar para el registro
+            let datosReservaRegistrar = peticion.body
+            // validar los datos
+            // enviar los datos a la base de datos para guardarlos
+            await servicioReserva.resgistarReserva(datosReservaRegistrar)
+            // responder 
+            respuesta.status(200).json({
+                "mensaje": "exito en la operacion de guardado",
+                "datos":datosReservaRegistrar
+            })
 
-        }catch (error){}
+        
+        }catch (error){
+            respuesta.status(400).json({
+                "mensaje": "falla en la operacion de guardado"+error
+                
+            })
+        }
     }
-    buscarReserva (peticion,respuesta) {
+    async buscarReservas (peticion,respuesta) {
         try {
+            let servicioReserva = new ServicioReserva ()
+            // 1. intentar buscar los datos en BD
+            // 2. Responder
+            respuesta.status(200).json({
+                "mensaje": "exito en la operacion de busqueda",
+                "datos":await servicioReserva.buscarReservas()
+            })
 
-        }catch (error){}
+        }catch (error){
+            respuesta.status(400).json({
+                "mensaje": "falla en la operacion de guardado"+error
+                
+            })
+        }
     }
-    buscarReservaPorId (peticion,respuesta){
+    async buscarReservaPorId (peticion,respuesta){
         try {
+            let servicioReserva = new ServicioReserva ()
+            //1. Checkear los parametros de la peticion 
+            let idReservaBuscar = peticion.params.id
+            // 2. validar el dato que llego
+            // 3. buscar la habitacion en BD
+            // 4. responder
+            respuesta.status(200).json({
+                "mensaje": "exito en la operacion de busqueda",
+                "datos":await servicioReserva.buscarReservas(idReservaBuscar)
+                
+            })
 
-        }catch (error){}
+        }catch (error){
+            respuesta.status(400).json({
+                "mensaje": "falla en la operacion de guardado"+error
+                
+            })
+        }
     }
-    modificarReserva (peticion,respuesta){
-        try {
+    async modificarReserva (peticion,respuesta){
 
-        }catch (error){}
+        try { 
+            let servicioReserva = new ServicioReserva()
+            //1. traigo el ID a modificar de la peticion
+            let idReservaModificar = peticion.params.id
+            let datosReservaModificar = peticion.body
+            //2. validar datos
+            //3. intentar buscar y modificar en bd
+            await servicioReserva.modificarReserva(idReservaModificar,
+                 datosReservaModificar)
+            //4. responder
+
+            respuesta.status(200).json({
+                "mensaje": "exito en la operacion de modificacion",
+                "datos":datosReservaModificar
+                
+            })
+
+        }catch (error){
+            respuesta.status(400).json({
+                "mensaje": "falla en la operacion de guardado"+error
+                
+                
+            })
+        }
     }
-    borrarReserva (peticion,respuesta){
+    async borrarReserva (peticion,respuesta){
         try {
-
-        }catch (error){}
+            let servicioReserva = new ServicioReserva ()
+            let idReservaBorrar = peticion.params.id
+            // validar
+            if (!idReservaBorrar) {
+                respuesta.status(400).json({
+                    "mensaje": "Falta el ID de la reserva a borrar."
+                });
+            
+            
+            }
+            //intento borrar la habitacion en bd
+            respuesta.status(200).json({
+                "mensaje": "exito en la operacion de borrado",
+                "dato": await servicioReserva.borrarReserva(idReservaBorrar)
+            
+                
+            })  
+        }catch (error){
+            respuesta.status(400).json({
+                "mensaje": "falla en la operacion de guardado"+error
+                
+            })
+        }
     }
 }
